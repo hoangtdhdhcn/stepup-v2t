@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio/Video Processing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        input, select, button {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .results {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .results a {
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Audio/Video File Processing</h1>
+    <form id="uploadForm">
+        <label for="file">Select File:</label>
+        <input type="file" id="file" name="file" accept=".mp3, .mp4, .wav" required>
+        
+        <label for="domain_type">Domain Type:</label>
+        <select id="domain_type" name="domain_type">
+            <option value="general">General</option>
+            <option value="meeting">Meeting</option>
+            <option value="podcast">Podcast</option>
+        </select>
+        
+        <label for="language">Language:</label>
+        <select id="language" name="language">
+            <option value="en">English</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+        </select>
+        
+        <button type="submit">Upload & Process</button>
+    </form>
+    
+    <div class="results" id="results"></div>
+
+    <script>
+        const uploadForm = document.getElementById('uploadForm');
+        const resultsDiv = document.getElementById('results');
+
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(uploadForm);
+            resultsDiv.textContent = "Processing...";
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    resultsDiv.innerHTML = `
+                        <p>${result.message}</p>
+                        <p><a href="/download/output.txt" download>Download Transcript</a></p>
+                        <p><a href="/download/output.srt" download>Download Subtitles</a></p>
+                    `;
+                } else {
+                    resultsDiv.textContent = `Error: ${result.error}`;
+                }
+            } catch (error) {
+                resultsDiv.textContent = "An error occurred. Please try again.";
+            }
+        });
+    </script>
+</body>
+</html>
