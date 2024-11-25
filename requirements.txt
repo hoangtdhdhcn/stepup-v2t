@@ -1,3 +1,9 @@
+torch
+torchaudio
+omegaconf
+nltk
+Werkzeug
+Flask
 wget
 nemo_toolkit
 ctranslate2==4.4.0
