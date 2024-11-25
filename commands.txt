@@ -1,19 +1,12 @@
-curl -X POST http://127.0.0.1:5000/transcribe \
-    -F "file=@video_file.mp4" \
-    -F "language=en" \
-    -F "domain_type=telephonic" \
-    -F "batch_size=8" \
-    -F "model_name=large-v2" \
-    -F "suppress_numerals=true"
-
-
 curl -X POST http://127.0.0.1:5000/upload \
-     -F "file=@path/to/your/file.mp3" \
-     -F "domain_type=general" \
-     -F "language=en"
+  -F "file=@test_video.mp4" \
+  -F "domain_type=general" \
+  -F "language=en"
 
-    
+
 curl -O http://127.0.0.1:5000/download/output.txt
 curl -O http://127.0.0.1:5000/download/output.srt
+
+
 
 
