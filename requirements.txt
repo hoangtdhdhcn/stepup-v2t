@@ -1,5 +1,5 @@
 wget
-nemo_toolkit[asr]>=2.dev
+nemo_toolkit
 ctranslate2==4.4.0
 
 # Install the following using 'pip', don't use: pip install -r requirements.txt
