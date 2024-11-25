@@ -36,6 +36,11 @@ os.makedirs(RESULTS_FOLDER, exist_ok=True)
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# Home route (root URL)
+@app.route('/')
+def home():
+    return "Welcome to the Flask Transcription and Diarization API! Please use the /upload endpoint to upload a file."
+
 # API to upload the file
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -102,13 +107,17 @@ def process_audio(file_path, domain_type, language):
 
     # Generate the word speaker mapping and align with speaker timestamps
     speaker_ts = []
-    with open(os.path.join(temp_path, "pred_rttms", "mono_file.rttm"), "r") as f:
-        lines = f.readlines()
-        for line in lines:
-            line_list = line.split(" ")
-            s = int(float(line_list[5]) * 1000)
-            e = s + int(float(line_list[8]) * 1000)
-            speaker_ts.append([s, e, int(line_list[11].split("_")[-1])])
+    rttm_file_path = os.path.join(temp_path, "pred_rttms", "mono_file.rttm")
+    if os.path.exists(rttm_file_path):
+        with open(rttm_file_path, "r") as f:
+            lines = f.readlines()
+            for line in lines:
+                line_list = line.split(" ")
+                s = int(float(line_list[5]) * 1000)
+                e = s + int(float(line_list[8]) * 1000)
+                speaker_ts.append([s, e, int(line_list[11].split("_")[-1])])
+    else:
+        return jsonify({"error": "Diarization result not found"}), 500
 
     word_timestamps = whisper_results[0]["segments"]
     wsm = get_words_speaker_mapping(word_timestamps, speaker_ts, "start")
@@ -143,5 +152,4 @@ def download_file(filename):
 
 # Run the Flask app
 if __name__ == '__main__':
-    # app.run(debug=True, host='0.0.0.0', port=8888)
     app.run(debug=True)
